@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { parseString as parseXmlString } from 'xml2js';
 import { parse } from 'url';
-import { fixTrackTitle } from './utils.js';
+import { fixTrackTitle } from './utils';
 
 export async function getShoutcastV1Station(url: string, callback: (error: any, station?: any) => void) {
   url = url + '/7.html';

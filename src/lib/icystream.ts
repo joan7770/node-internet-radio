@@ -1,7 +1,7 @@
 import { parse } from 'url';
 import { TLSSocket, connect } from 'tls';
 import { Socket } from 'net';
-import { fixTrackTitle } from './utils.js';
+import { fixTrackTitle } from './utils';
 import packageJson from '../../package.json';
 
 const version = packageJson.version;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { parse } from 'url';
-import { fixTrackTitle } from './utils.js';
+import { fixTrackTitle } from './utils';
 
 export async function getIcecastStation(url: string, callback: (error: any, station?: any) => void) {
   const urlObject = parse(url);
