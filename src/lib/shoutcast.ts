@@ -2,8 +2,10 @@ import axios from 'axios';
 import { parseString as parseXmlString } from 'xml2js';
 import { parse } from 'url';
 import { fixTrackTitle } from './utils';
+import { StreamSource } from './StreamSource';
+import { Station } from './Station';
 
-export async function getShoutcastV1Station(url: string, callback: (error: any, station?: any) => void) {
+export async function getShoutcastV1Station(url: string, callback: (error: any, station?: Station) => void) {
   url = url + '/7.html';
 
   try {
@@ -32,7 +34,7 @@ export async function getShoutcastV1Station(url: string, callback: (error: any, 
   }
 }
 
-export async function getShoutcastV2Station(url: string, callback: (error: any, station?: any) => void) {
+export async function getShoutcastV2Station(url: string, callback: (error: any, station?: Station) => void) {
   const urlObject = parse(url);
   const v2StatsUrl =
     urlObject.protocol +
@@ -59,11 +61,11 @@ export async function getShoutcastV2Station(url: string, callback: (error: any, 
   }
 }
 
-export function parseV1Response(body: any, callback: (error: any, station?: any) => void) {
+export function parseV1Response(body: any, callback: (error: any, station?: Station) => void) {
   const csvArrayParsing = /<body>(.*)<\/body>/im.exec(body);
 
   if (!csvArrayParsing || typeof csvArrayParsing.length !== 'number') {
-    return callback(null, null);
+    return callback(new Error('Nothing to parse'));
   }
 
   const csvArray = csvArrayParsing[1].split(',');
@@ -80,7 +82,7 @@ export function parseV1Response(body: any, callback: (error: any, station?: any)
       listeners: csvArray[0],
       bitrate: csvArray[5],
       title,
-      fetchsource: 'SHOUTCAST_V1',
+      fetchsource: StreamSource.SHOUTCAST_V1,
     };
 
     return callback(null, station);
@@ -91,7 +93,7 @@ export function parseV1Response(body: any, callback: (error: any, station?: any)
   }
 }
 
-export function parseV2Response(url: string, body: string, callback: (error: any, station?: any) => void) {
+export function parseV2Response(url: string, body: string, callback: (error: any, station?: Station) => void) {
   parseXmlString(body, function(error, result) {
     if (error) {
       return callback(error);
@@ -117,7 +119,7 @@ export function parseV2Response(url: string, body: string, callback: (error: any
         listeners: stationStats.CURRENTLISTENERS[0],
         bitrate: stationStats.BITRATE[0],
         title: fixTrackTitle(stationStats.SONGTITLE[0]),
-        fetchsource: 'SHOUTCAST_V2',
+        fetchsource: StreamSource.SHOUTCAST_V2,
       };
       return callback(null, station);
     } else {

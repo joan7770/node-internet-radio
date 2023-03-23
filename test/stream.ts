@@ -18,11 +18,11 @@ describe("handle stream data", function () {
       expect(station).to.have.property('fetchsource');
       expect(station).to.have.property('headers');
 
-      expect(station.headers).to.have.property('icy-name');
-      expect(station.headers).to.have.property('icy-br');
-      expect(station.headers).to.have.property('content-type');
+      expect(station?.headers).to.have.property('icy-name');
+      expect(station?.headers).to.have.property('icy-br');
+      expect(station?.headers).to.have.property('content-type');
 
-      expect(station.fetchsource).to.equal(StreamSource.STREAM);
+      expect(station?.fetchsource).to.equal(StreamSource.STREAM);
       done();
     });
   });

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { parse } from 'url';
 import { fixTrackTitle } from './utils';
+import { StreamSource } from './StreamSource';
+import { Station } from './Station';
 
-export async function getIcecastStation(url: string, callback: (error: any, station?: any) => void) {
+export async function getIcecastStation(url: string, callback: (error: any, station?: Station) => void) {
   const urlObject = parse(url);
   const icecastJsonUrl =
     urlObject.protocol +
@@ -35,7 +37,7 @@ export async function getIcecastStation(url: string, callback: (error: any, stat
   }
 }
 
-export function parseIcecastResponse(url: string, body: any, callback: (error: any, station?: any) => void) {
+export function parseIcecastResponse(url: string, body: any, callback: (error: any, station?: Station) => void) {
   let stationObject;
   try {
     stationObject = JSON.parse(body);
@@ -44,8 +46,7 @@ export function parseIcecastResponse(url: string, body: any, callback: (error: a
   }
 
   if (
-    !stationObject.icestats ||
-    !stationObject.icestats.source ||
+    !stationObject?.icestats?.source ||
     stationObject.icestats.source.length === 0
   ) {
     return callback(
@@ -61,7 +62,7 @@ export function parseIcecastResponse(url: string, body: any, callback: (error: a
         listeners: source.listeners,
         bitrate: source.bitrate,
         title: fixTrackTitle(source.title),
-        fetchsource: 'ICECAST',
+        fetchsource: StreamSource.ICECAST,
       };
 
       return callback(null, station);

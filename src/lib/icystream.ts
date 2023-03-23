@@ -3,11 +3,13 @@ import { TLSSocket, connect } from 'tls';
 import { Socket } from 'net';
 import { fixTrackTitle } from './utils';
 import packageJson from '../../package.json';
+import { StreamSource } from './StreamSource';
+import { Station } from './Station';
 
 const version = packageJson.version;
 const clientName = 'node-internet-radio v' + version;
 
-export function getStreamStation(url: string, callback: (error: any, station?: any) => void) {
+export function getStreamStation(url: string, callback: (error: any, station?: Station) => void) {
   const urlString = url;
   let completed = false;
   let buffer = '';
@@ -31,7 +33,7 @@ export function getStreamStation(url: string, callback: (error: any, station?: a
 
   // Support HTTP Basic auth via Username:Password@host url syntax
   if (parsedUrl.auth) {
-    const encodedAuth = new Buffer(parsedUrl.auth).toString('base64');
+    const encodedAuth = Buffer.from(parsedUrl.auth).toString('base64');
     headers += 'Authorization: Basic ' + encodedAuth + '\r\n';
   }
 
@@ -161,7 +163,7 @@ export function getStreamStation(url: string, callback: (error: any, station?: a
     return headersObject;
   }
 
-  function handleBuffer(buffer: string, callback: (error: any, station?: any) => void) {
+  function handleBuffer(buffer: string, callback: (error: any, station?: Station) => void) {
     let title = getDetailsFromBuffer(buffer);
     title = fixTrackTitle(title);
 
@@ -169,7 +171,7 @@ export function getStreamStation(url: string, callback: (error: any, station?: a
 
     const station = {
       title,
-      fetchsource: 'STREAM',
+      fetchsource: StreamSource.STREAM,
       headers,
     };
 

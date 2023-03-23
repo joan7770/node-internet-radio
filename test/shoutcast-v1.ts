@@ -12,7 +12,7 @@ describe("handle shoutcast v1 data ", function() {
       expect(station).to.exist;
       expect(station).to.have.property('title');
       expect(station).to.have.property('fetchsource');
-      expect(station.fetchsource).to.equal(StreamSource.SHOUTCAST_V1);
+      expect(station?.fetchsource).to.equal(StreamSource.SHOUTCAST_V1);
       done();
     });
 

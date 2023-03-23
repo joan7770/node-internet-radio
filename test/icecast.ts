@@ -13,7 +13,7 @@ describe("handle icecast data ", function() {
         expect(station).to.exist;
         expect(station).to.have.property('title');
         expect(station).to.have.property('fetchsource');
-        expect(station.fetchsource).to.equal(StreamSource.ICECAST);
+        expect(station?.fetchsource).to.equal(StreamSource.ICECAST);
         done();
       });
     });

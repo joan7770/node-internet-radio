@@ -1,15 +1,12 @@
 import { getIcecastStation } from './lib/icecast';
 import { getShoutcastV1Station, getShoutcastV2Station } from './lib/shoutcast';
 import { getStreamStation } from './lib/icystream';
+import { StreamSource } from './lib/StreamSource';
+import { Station } from './lib/Station';
 
-export const StreamSource = {
-  SHOUTCAST_V1: 'SHOUTCAST_V1',
-  SHOUTCAST_V2: 'SHOUTCAST_V2',
-  STREAM: 'STREAM',
-  ICECAST: 'ICECAST'
-};
+export { StreamSource, Station };
 
-export function getStationInfo(url: string, callback: (error: any, station?: any) => void, method?: string) {
+export function getStationInfo(url: string, callback: (error: any, station?: Station) => void, method?: string) {
   let methodHandler;
 
   switch (method) {
@@ -45,20 +42,20 @@ export function getStationInfo(url: string, callback: (error: any, station?: any
       return callback(err);
     });
 
-  /*
-  @params -> string: url of given stream
-  @returns -> mixed (object if successful, string if error)
+  /**
+  @params {string} url of given stream
+  @returns {Promise<Station | undefined>} (object if successful, undefined if error)
   */
-  async function findStation(url: string) {
-    let results = await V1(url);
+  async function findStation(url: string): Promise<Station | undefined> {
+    let results = await V2(url);
     // Find which provider has our station
-    if (results == null || typeof results == 'undefined') {
-      results = await V2(url);
+    if (!results) {
+      results = await V1(url);
     }
-    if (results == null || typeof results == 'undefined') {
+    if (!results) {
       results = await Ice(url);
     }
-    if (results == null || typeof results == 'undefined') {
+    if (!results) {
       results = await Icy(url);
     }
     return results;
@@ -67,9 +64,9 @@ export function getStationInfo(url: string, callback: (error: any, station?: any
     //=                  Promise wrapper functions                                       =
     //====================================================================================
     function V1(url: string) {
-      return new Promise<any>((resolve, reject) => {
+      return new Promise<Station | undefined>((resolve, reject) => {
         try {
-          getShoutcastV1Station(url, function(error: any, station: any) {
+          getShoutcastV1Station(url, (error: any, station?: Station) => {
             resolve(station);
           });
         } catch (err) {
@@ -78,9 +75,9 @@ export function getStationInfo(url: string, callback: (error: any, station?: any
       });
     }
     function V2(url: string) {
-      return new Promise<any>((resolve, reject) => {
+      return new Promise<Station | undefined>((resolve, reject) => {
         try {
-          getShoutcastV2Station(url, function(error: any, station: any) {
+          getShoutcastV2Station(url, (error: any, station?: Station) => {
             resolve(station);
           });
         } catch (err) {
@@ -89,9 +86,9 @@ export function getStationInfo(url: string, callback: (error: any, station?: any
       });
     }
     function Icy(url: string) {
-      return new Promise<any>((resolve, reject) => {
+      return new Promise<Station | undefined>((resolve, reject) => {
         try {
-          getStreamStation(url, function(error: any, station: any) {
+          getStreamStation(url, (error: any, station?: Station) => {
             resolve(station);
           });
         } catch (err) {
@@ -100,9 +97,9 @@ export function getStationInfo(url: string, callback: (error: any, station?: any
       });
     }
     function Ice(url: string) {
-      return new Promise<any>((resolve, reject) => {
+      return new Promise<Station | undefined>((resolve, reject) => {
         try {
-          getIcecastStation(url, function(error: any, station: any) {
+          getIcecastStation(url, (error: any, station?: Station) => {
             resolve(station);
           });
         } catch (err) {
